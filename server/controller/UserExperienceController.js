@@ -58,9 +58,23 @@ const createExperiences = async (req, res) => {
       usex_description: req.body.usex_description,
       usex_experience_type: req.body.usex_experience_type,
     });
-    return res.send(userExperiences);
+    const users = await req.context.models.users_experiences.findOne({
+      where: { usex_entity_id: req.body.usex_entity_id },
+      include: {
+        model: req.context.models.city,
+        as: "usex_city",
+      },
+    });
+    return res.status(200).json({ data: users, message: "saved!" });
   } catch (error) {
-    return res.status(404).send(error);
+    const users = await req.context.models.users_experiences.findOne({
+      where: { usex_entity_id: req.body.usex_entity_id },
+      include: {
+        model: req.context.models.city,
+        as: "usex_city",
+      },
+    });
+    return res.status(404).json({ data: users, message: "error found!" });
   }
 };
 
